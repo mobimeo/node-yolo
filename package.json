@@ -1,0 +1,11 @@
+{
+  "name": "@moovel/darknet",
+  "version": "0.1.0",
+  "description": "NodeJS interface for Darknet",
+  "main": "darknet.js",
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "~1.2.1",
+    "nan": "^2.0.0"
+  }
+}

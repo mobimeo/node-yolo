@@ -1,0 +1,8 @@
+node_modules
+build/
+.DS_Store
+yolo.weights
+data
+cfg
+test
+*.jpeg
