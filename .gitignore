@@ -5,3 +5,4 @@ yolo.weights
 data
 cfg
 *.jpeg
+test/server.conf

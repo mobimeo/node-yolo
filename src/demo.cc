@@ -22,7 +22,6 @@ extern "C" {
     image get_image_from_stream(CvCapture *cap);
 }
 
-
 using v8::Local;
 using v8::Function;
 using v8::Value;
@@ -50,16 +49,7 @@ static float *avg;
 static image modified_frame;
 static image original_frame;
 
-struct Result {
-   float x;
-   float y;
-   float w;
-   float h;
-   float prob;
-   char* name;
-};
-
-std::vector<Result> current_results;
+std::vector<RecognitionResult> current_results;
 
 void *fetch_in_thread(void *ptr) {
     printf("::fetch_in_thread started\n");
@@ -129,15 +119,7 @@ void *detect_in_thread(void *ptr) {
     return 0;
 }
 
-double get_wall_time() {
-    struct timeval time;
-    if (gettimeofday(&time,NULL)){
-        return 0;
-    }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
-}
-
-void callback(Local<Function> cb) {
+void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::ExecutionProgress& progress) {
     image modified = modified_frame;
     image original = original_frame;
     image modified_copy = copy_image(modified);
@@ -151,6 +133,7 @@ void callback(Local<Function> cb) {
 
     char* rawData;
 
+    printf("%d %d\n", modified.w, modified.h);
     for(y = 0; y < modified.h; ++y){
         for(x = 0; x < modified.w; ++x){
             for(k= 0; k < modified.c; ++k){
@@ -159,10 +142,12 @@ void callback(Local<Function> cb) {
         }
     }
 
-    CvMat* compressed = cvEncodeImage(".jpg", disp, 0);
-    rawData = (char *) malloc(compressed->cols);
-    memcpy(rawData, compressed->data.ptr, compressed->cols);
+    // CvMat* compressed = cvEncodeImage(".jpg", disp, 0);
+    // rawData = (char *) malloc(compressed->cols);
+    // memcpy(rawData, compressed->data.ptr, compressed->cols);
 
+    rawData = (char *) malloc(disp->imageSize);
+    memcpy(rawData, disp->imageData, disp->imageSize);
 
     IplImage *dispOriginal = cvCreateImage(cvSize(original.w,original.h), IPL_DEPTH_8U, original.c);
     int stepOriginal = dispOriginal->widthStep;
@@ -181,28 +166,25 @@ void callback(Local<Function> cb) {
     rawDataOriginal = (char *) malloc(compressedOriginal->cols);
     memcpy(rawDataOriginal, compressedOriginal->data.ptr, compressedOriginal->cols);
 
-    const int argc = 3;
-    v8::Local<v8::Array> results = Nan::New<v8::Array>();
+    WorkerData progressState;
+
+    progressState.modifiedFrame = rawData;
+    progressState.modifiedFrameSize = disp->imageSize;
+
+    progressState.originalFrame = rawDataOriginal;
+    progressState.originalFrameSize = compressedOriginal->cols;
+
+    progressState.numberOfResults = current_results.size();
+    progressState.recognitionResults = new RecognitionResult[progressState.numberOfResults];
+
     int i = 0;
-    printf("Predictions size %zu \n", current_results.size());
     for(auto const& result: current_results) {
-        v8::Local<v8::Object> obj = Nan::New<v8::Object>();
-        obj->Set(Nan::New("x").ToLocalChecked(), Nan::New<v8::Number>(result.x));
-        obj->Set(Nan::New("y").ToLocalChecked(), Nan::New<v8::Number>(result.y));
-        obj->Set(Nan::New("w").ToLocalChecked(), Nan::New<v8::Number>(result.w));
-        obj->Set(Nan::New("h").ToLocalChecked(), Nan::New<v8::Number>(result.h));
-        obj->Set(Nan::New("prob").ToLocalChecked(), Nan::New<v8::Number>(result.prob));
-        obj->Set(Nan::New("name").ToLocalChecked(), Nan::New<v8::String>(result.name).ToLocalChecked());
-        results->Set(i, obj);
+        progressState.recognitionResults[i] = result;
         i++;
     }
 
-    v8::Local<v8::Value> argv[argc] = {
-        Nan::NewBuffer(rawData, compressed->cols).ToLocalChecked(),
-        Nan::NewBuffer(rawDataOriginal, compressedOriginal->cols).ToLocalChecked(),
-        results,
-    };
-    Nan::MakeCallback(Nan::GetCurrentContext()->Global(), cb, argc, argv);
+    progress.Send(&progressState, sizeof( progressState ));
+    Sleep(25);
 
     cvReleaseImage(&disp);
     free_image(modified_copy);
@@ -211,31 +193,17 @@ void callback(Local<Function> cb) {
     free_image(original_copy);
 }
 
-
-void start_demo(v8::Local<v8::Object> opts, Local<Function> cb) {
-    printf("Test\n");
-
-    v8::Local<v8::Value> cfgFile = Nan::Get(opts, Nan::New("cfgFile").ToLocalChecked()).ToLocalChecked();
-    v8::String::Utf8Value cfgFileStr(cfgFile);
-    char* cfgfile = *cfgFileStr;
-
-    v8::Local<v8::Value> weightFile = Nan::Get(opts, Nan::New("weightFile").ToLocalChecked()).ToLocalChecked();
-    v8::String::Utf8Value weightFileStr(weightFile);
-    char* weightfile = *weightFileStr;
-
-    v8::Local<v8::Value> dataFile = Nan::Get(opts, Nan::New("dataFile").ToLocalChecked()).ToLocalChecked();
-    v8::String::Utf8Value dataFileStr(dataFile);
-    char* datafile = *dataFileStr;
-
-    v8::Local<v8::Value> namesFile = Nan::Get(opts, Nan::New("namesFile").ToLocalChecked()).ToLocalChecked();
-    v8::String::Utf8Value namesFileStr(namesFile);
-    char* namesfile = *namesFileStr;
-
-    list *options = read_data_cfg(datafile);
+void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<WorkerData>::ExecutionProgress& progress) {
+    printf("Test \n");
+    printf("%s \n", opts.cfgfile);
+    printf("%s \n", opts.weightfile);
+    printf("%s \n", opts.datafile);
+    printf("%s \n", opts.namesfile);
+    list *options = read_data_cfg(opts.datafile);
     char classesParam[] = "classes";
     char namesParam[] = "names";
     int classes = option_find_int(options, classesParam, 20);
-    char *name_list = option_find_str(options, namesParam, namesfile);
+    char *name_list = option_find_str(options, namesParam, opts.namesfile);
     char **names = get_labels(name_list);
     float thresh = .24;
     int cam_index = 0;
@@ -244,10 +212,8 @@ void start_demo(v8::Local<v8::Object> opts, Local<Function> cb) {
     demo_alphabet = alphabet;
     demo_classes = classes;
     demo_thresh = thresh;
-    net = parse_network_cfg(cfgfile);
-    if(weightfile){
-        load_weights(&net, weightfile);
-    }
+    net = parse_network_cfg(opts.cfgfile);
+    load_weights(&net, opts.weightfile);
     set_batch_network(&net, 1);
 
     srand(2222222);
@@ -295,7 +261,7 @@ void start_demo(v8::Local<v8::Object> opts, Local<Function> cb) {
         pthread_join(fetch_thread, 0);
         pthread_join(detect_thread, 0);
 
-        callback(cb);
+        callback(progress);
 
         det   = in;
         det_s = in_s;
