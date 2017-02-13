@@ -1,6 +1,6 @@
 {
   "name": "@moovel/darknet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "NodeJS interface for Darknet",
   "main": "darknet.js",
   "gypfile": true,
@@ -10,5 +10,6 @@
   },
   "devDependencies": {
     "fluent-ffmpeg": "^2.1.0"
-  }
+  },
+  "license": "MIT"
 }
