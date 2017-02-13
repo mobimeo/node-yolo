@@ -28,6 +28,8 @@ npm i @moovel/darknet --save
 
 ## Usage
 
+You need to download `cfg`, `data` folders and weight files you need to use from the darknet project.
+
 ```js
 const darknet = require('@moovel/darknet');
 
