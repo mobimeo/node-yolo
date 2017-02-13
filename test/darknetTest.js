@@ -35,7 +35,6 @@ darknet.detect({
   cfgFile: './cfg/yolo.cfg',
   weightFile: './yolo.weights',
   dataFile: './cfg/coco.data',
-  namesFile: './data/coco.names',
 }, function(modified, original, detections) {
   getPipe().write(modified);
 });

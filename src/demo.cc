@@ -4,18 +4,18 @@
 #include <vector>
 
 extern "C" {
-    #include "network.h"
-    #include "detection_layer.h"
-    #include "region_layer.h"
-    #include "cost_layer.h"
-    #include "utils.h"
-    #include "parser.h"
-    #include "box.h"
-    #include "image.h"
-    #include "demo.h"
     #include <sys/time.h>
-    #include "option_list.h"
-    #include "data.h"
+    #include "darknet/network.h"
+    #include "darknet/detection_layer.h"
+    #include "darknet/region_layer.h"
+    #include "darknet/cost_layer.h"
+    #include "darknet/utils.h"
+    #include "darknet/parser.h"
+    #include "darknet/box.h"
+    #include "darknet/image.h"
+    #include "darknet/demo.h"
+    #include "darknet/option_list.h"
+    #include "darknet/data.h"
     #include "opencv2/highgui/highgui_c.h"
     #include "opencv2/imgproc/imgproc_c.h"
 
@@ -40,7 +40,8 @@ static image in_s ;
 static image det  ;
 static image det_s;
 static CvCapture * cap;
-static float demo_thresh = 0;
+static float demo_thresh = 0.24;
+static float demo_hier_thresh = .5;
 
 static float *predictions[FRAMES];
 static int demo_index = 0;
@@ -95,7 +96,7 @@ void *detect_in_thread(void *ptr) {
     if(l.type == DETECTION){
         get_detection_boxes(l, 1, 1, demo_thresh, probs, boxes, 0);
     } else if (l.type == REGION){
-        get_region_boxes(l, 1, 1, demo_thresh, probs, boxes, 0, 0);
+        get_region_boxes(l, 1, 1, demo_thresh, probs, boxes, 0, 0, demo_hier_thresh);
     } else {
         error("Last layer must produce detections\n");
     }
@@ -189,16 +190,15 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
     list *options = read_data_cfg(opts.datafile);
     char classesParam[] = "classes";
     char namesParam[] = "names";
+    char defaultNamesList[] = "data/names.list";
     int classes = option_find_int(options, classesParam, 20);
-    char *name_list = option_find_str(options, namesParam, opts.namesfile);
+    char *name_list = option_find_str(options, namesParam, defaultNamesList);
     char **names = get_labels(name_list);
-    float thresh = .24;
     int cam_index = 0;
     image **alphabet = load_alphabet();
     demo_names = names;
     demo_alphabet = alphabet;
     demo_classes = classes;
-    demo_thresh = thresh;
     net = parse_network_cfg(opts.cfgfile);
     load_weights(&net, opts.weightfile);
     set_batch_network(&net, 1);
