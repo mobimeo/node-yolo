@@ -9,7 +9,16 @@ Currently, the wrapper implements a demo method to run a recognition from the we
 
 ## Prerequisites
 
-OpenCV, CUDA, TODO
+This module requires OpenCV installed. First, you need to compile darknet with OpenCV support (optionally, with CUDA support):
+
+```sh
+git clone git@github.com:pjreddie/darknet.git
+cd darknet
+make OPENCV=1
+make install # by default installed to /usr/local
+```
+
+After that you can process with the installation via NPM.
 
 ## Installation
 
