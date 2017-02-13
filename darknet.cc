@@ -1,10 +1,10 @@
 #include <nan.h>
-#include "src/demo.h"
 #include <unistd.h>
+
+#include "src/demo.h"
 #include "src/types.h"
 
 using namespace Nan;
-
 
 template<typename T>
 class DetectionWorker : public AsyncProgressWorkerBase<T> {
@@ -21,7 +21,6 @@ class DetectionWorker : public AsyncProgressWorkerBase<T> {
     HandleScope scope;
     const int argc = 3;
     v8::Local<v8::Array> results = Nan::New<v8::Array>();
-    printf("Predictions size %d \n", data->numberOfResults);
     for(int i = 0; i < data->numberOfResults; i++) {
         RecognitionResult result = data->recognitionResults[i];
         v8::Local<v8::Object> obj = Nan::New<v8::Object>();
