@@ -1,7 +1,6 @@
 const darknet = require('../darknet');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
-
 let ffmpeg = null;
 
 function getPipe() {
@@ -24,7 +23,7 @@ function getPipe() {
         // 'http://localhost:8090/feed1.ffm'
         'output.mp4'
       ], {
-        stdio: ['pipe',  process.stdout, process.stderr],
+        stdio: ['pipe', 'ignore', 'ignore'],
       });
     return ffmpeg.stdin;
   } else {
@@ -32,27 +31,11 @@ function getPipe() {
   }
 }
 
-try {
-  fs.unlinkSync('data.raw');
-} catch (err) {
-
-}
-
-let i = 0;
-darknet({
+darknet.detect({
   cfgFile: './cfg/yolo.cfg',
   weightFile: './yolo.weights',
   dataFile: './cfg/coco.data',
   namesFile: './data/coco.names',
 }, function(modified, original, detections) {
-  console.log('Got frame', modified);
-  console.log(detections);
-  const pipe = getPipe();
-  fs.appendFileSync('data.raw', modified);
-  pipe.write(modified);
-  i++;
+  getPipe().write(modified);
 });
-
-setInterval(function() {
-  console.log('Async');
-}, 1000);

@@ -80,7 +80,9 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
 }
 
 void Init(v8::Local<v8::Object> exports, v8::Local<v8::Object> module) {
-  Nan::SetMethod(module, "exports", detect);
+  v8::Local<v8::Object> obj = Nan::New<v8::Object>();
+  obj->Set(Nan::New("detect").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(detect)->GetFunction());
+  module->Set(Nan::New("exports").ToLocalChecked(), obj);
 }
 
 NODE_MODULE(addon, Init)

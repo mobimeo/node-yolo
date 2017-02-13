@@ -22,7 +22,7 @@ npm i @moovel/darknet --save
 ```js
 const darknet = require('@moovel/darknet');
 
-darknet({
+darknet.detect({
   cfgFile: './cfg/yolo.cfg',
   weightFile: './yolo.weights',
   dataFile: './cfg/coco.data',
