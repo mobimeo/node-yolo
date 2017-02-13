@@ -4,5 +4,9 @@ build/
 yolo.weights
 data
 cfg
-test
 *.jpeg
+test/server.conf
+tiny-yolo-voc.weights
+data.raw
+*.mp4
+*.ffm

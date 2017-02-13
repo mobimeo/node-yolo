@@ -52,13 +52,11 @@ static image original_frame;
 std::vector<RecognitionResult> current_results;
 
 void *fetch_in_thread(void *ptr) {
-    printf("::fetch_in_thread started\n");
     in = get_image_from_stream(cap);
     if(!in.data){
         error("Stream closed.");
     }
     in_s = resize_image(in, net.w, net.h);
-    printf("::fetch_in_thread ended\n");
     return 0;
 }
 
@@ -70,8 +68,6 @@ void capture_detections(int num, float thresh, box *boxes, float **probs, char *
         float prob = probs[i][cl];
         if (prob > thresh) {
             box b = boxes[i];
-            printf("x %f, y %f, w %f, h %f \n", b.x, b.y, b.w, b.h);
-            printf("%s: %.0f%%\n", names[cl], prob*100);
             current_results.push_back({
                 .x = b.x,
                 .y = b.y,
@@ -85,7 +81,6 @@ void capture_detections(int num, float thresh, box *boxes, float **probs, char *
 }
 
 void *detect_in_thread(void *ptr) {
-    printf("->detect_in_thread started %d \n", demo_index);
     float nms = .4;
 
     layer l = net.layers[net.n-1];
@@ -106,6 +101,8 @@ void *detect_in_thread(void *ptr) {
     }
     if (nms > 0) do_nms(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
+    free_image(images[demo_index]);
+
     images[demo_index] = det;
     det = images[(demo_index + FRAMES/2 + 1)%FRAMES];
     demo_index = (demo_index + 1)%FRAMES;
@@ -115,8 +112,24 @@ void *detect_in_thread(void *ptr) {
     capture_detections(l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
     modified_frame = copy_image(det);
 
-    printf("->detect_in_thread ended %d \n", demo_index);
     return 0;
+}
+
+IplImage* createIplImage(image input) {
+    int x,y,k;
+
+    IplImage *disp = cvCreateImage(cvSize(input.w,input.h), IPL_DEPTH_8U, input.c);
+    int step = disp->widthStep;
+
+    for(y = 0; y < input.h; ++y){
+        for(x = 0; x < input.w; ++x){
+            for(k= 0; k < input.c; ++k){
+                disp->imageData[y*step + x*input.c + k] = (unsigned char)(get_pixel(input,x,y,k)*255);
+            }
+        }
+    }
+
+    return disp;
 }
 
 void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::ExecutionProgress& progress) {
@@ -126,45 +139,17 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
     image original_copy = copy_image(original);
     if(modified.c == 3) rgbgr_image(modified_copy);
     if(original.c == 3) rgbgr_image(original_copy);
-    int x,y,k;
 
-    IplImage *disp = cvCreateImage(cvSize(modified.w,modified.h), IPL_DEPTH_8U, modified.c);
-    int step = disp->widthStep;
-
+    IplImage *disp = createIplImage(modified);
     char* rawData;
-
-    printf("%d %d\n", modified.w, modified.h);
-    for(y = 0; y < modified.h; ++y){
-        for(x = 0; x < modified.w; ++x){
-            for(k= 0; k < modified.c; ++k){
-                disp->imageData[y*step + x*modified.c + k] = (unsigned char)(get_pixel(modified_copy,x,y,k)*255);
-            }
-        }
-    }
-
-    // CvMat* compressed = cvEncodeImage(".jpg", disp, 0);
-    // rawData = (char *) malloc(compressed->cols);
-    // memcpy(rawData, compressed->data.ptr, compressed->cols);
-
     rawData = (char *) malloc(disp->imageSize);
     memcpy(rawData, disp->imageData, disp->imageSize);
 
-    IplImage *dispOriginal = cvCreateImage(cvSize(original.w,original.h), IPL_DEPTH_8U, original.c);
-    int stepOriginal = dispOriginal->widthStep;
+    IplImage *dispOriginal = createIplImage(original);
 
     char* rawDataOriginal;
-
-    for(y = 0; y < original.h; ++y){
-        for(x = 0; x < original.w; ++x){
-            for(k= 0; k < original.c; ++k){
-                dispOriginal->imageData[y*stepOriginal + x*original.c + k] = (unsigned char)(get_pixel(original_copy,x,y,k)*255);
-            }
-        }
-    }
-
-    CvMat* compressedOriginal = cvEncodeImage(".jpg", dispOriginal, 0);
-    rawDataOriginal = (char *) malloc(compressedOriginal->cols);
-    memcpy(rawDataOriginal, compressedOriginal->data.ptr, compressedOriginal->cols);
+    rawDataOriginal = (char *) malloc(dispOriginal->imageSize);
+    memcpy(rawDataOriginal, dispOriginal->imageData, dispOriginal->imageSize);
 
     WorkerData progressState;
 
@@ -172,7 +157,7 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
     progressState.modifiedFrameSize = disp->imageSize;
 
     progressState.originalFrame = rawDataOriginal;
-    progressState.originalFrameSize = compressedOriginal->cols;
+    progressState.originalFrameSize = dispOriginal->imageSize;
 
     progressState.numberOfResults = current_results.size();
     progressState.recognitionResults = new RecognitionResult[progressState.numberOfResults];
@@ -184,21 +169,23 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
     }
 
     progress.Send(&progressState, sizeof( progressState ));
-    Sleep(25);
+    Sleep(1);
+
+    free(rawData);
+    free(rawDataOriginal);
 
     cvReleaseImage(&disp);
     free_image(modified_copy);
 
     cvReleaseImage(&dispOriginal);
     free_image(original_copy);
+
+    free_image(modified_frame);
+    free_image(original_frame);
+
 }
 
 void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<WorkerData>::ExecutionProgress& progress) {
-    printf("Test \n");
-    printf("%s \n", opts.cfgfile);
-    printf("%s \n", opts.weightfile);
-    printf("%s \n", opts.datafile);
-    printf("%s \n", opts.namesfile);
     list *options = read_data_cfg(opts.datafile);
     char classesParam[] = "classes";
     char namesParam[] = "names";

@@ -16,7 +16,7 @@ function getPipe() {
         '-f', 'rawvideo',
         '-pix_fmt', 'bgr24',
         '-s', '1280x720',
-        '-r', '30',
+        '-r', '1',
         '-i', '-',
         '-c:v', 'libx264',
         '-an',
@@ -43,11 +43,10 @@ darknet({
   cfgFile: './cfg/yolo.cfg',
   weightFile: './yolo.weights',
   dataFile: './cfg/coco.data',
-  namesFile: './data/names.list',
-}, function() {
-  console.log('Detection started!!!!');
+  namesFile: './data/coco.names',
 }, function(modified, original, detections) {
   console.log('Got frame', modified);
+  console.log(detections);
   const pipe = getPipe();
   fs.appendFileSync('data.raw', modified);
   pipe.write(modified);

@@ -13,17 +13,11 @@ class DetectionWorker : public AsyncProgressWorkerBase<T> {
     : AsyncProgressWorkerBase<T>(callback), progressCb(progress), opts(opts) {}
   ~DetectionWorker() {}
 
-  // Executed inside the worker-thread.
-  // It is not safe to access V8, or V8 data structures
-  // here, so everything we need for input and output
-  // should go on `this`.
   void Execute(const typename AsyncProgressWorkerBase<T>::ExecutionProgress& progress) {
-    printf("Executing\n");
     start_demo(opts, progress);
   }
 
   void HandleProgressCallback(const T *data, size_t size) {
-    printf("HandleProgressCallback\n");
     HandleScope scope;
     const int argc = 3;
     v8::Local<v8::Array> results = Nan::New<v8::Array>();
@@ -49,6 +43,7 @@ class DetectionWorker : public AsyncProgressWorkerBase<T> {
 
     progressCb->Call(argc, argv);
   }
+
   private:
     Callback* progressCb;
     InputOptions opts;
@@ -56,8 +51,10 @@ class DetectionWorker : public AsyncProgressWorkerBase<T> {
 
 void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   v8::Local<v8::Object> opts = arguments[0].As<v8::Object>();
-  Nan::Callback *callback = new Nan::Callback(arguments[1].As<Function>());
-  Nan::Callback *progress = new Nan::Callback(arguments[2].As<Function>());
+
+  v8::Local<v8::Function> function;
+  Nan::Callback callback(function);
+  Nan::Callback *progress = new Nan::Callback(arguments[1].As<Function>());
 
   v8::Local<v8::Value> cfgFile = Nan::Get(opts, Nan::New("cfgFile").ToLocalChecked()).ToLocalChecked();
   v8::String::Utf8Value cfgFileStr(cfgFile);
@@ -80,7 +77,7 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   strcpy(inputOptions.weightfile, weightfile);
   strcpy(inputOptions.datafile, datafile);
   strcpy(inputOptions.namesfile, namesfile);
-  Nan::AsyncQueueWorker(new DetectionWorker<WorkerData>(callback, progress, inputOptions));
+  Nan::AsyncQueueWorker(new DetectionWorker<WorkerData>(&callback, progress, inputOptions));
 }
 
 void Init(v8::Local<v8::Object> exports, v8::Local<v8::Object> module) {
