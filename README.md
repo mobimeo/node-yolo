@@ -78,3 +78,11 @@ darknet.detect({
   */
 });
 ```
+
+
+## TODO
+
+- detect a single image
+- detect from a video file
+- configure camera index
+- test
