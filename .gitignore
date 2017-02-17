@@ -10,3 +10,6 @@ tiny-yolo-voc.weights
 data.raw
 *.mp4
 *.ffm
+*.raw
+*.jpg
+*.list

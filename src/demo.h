@@ -8,5 +8,6 @@ using v8::Local;
 using v8::Function;
 
 void start_demo(InputOptions options, const typename Nan::AsyncProgressWorkerBase<WorkerData>::ExecutionProgress& progress);
+WorkerData* start_image_demo(InputOptions options);
 
 #endif

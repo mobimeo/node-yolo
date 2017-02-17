@@ -22,10 +22,12 @@ struct WorkerData {
 };
 
 struct InputOptions {
-  char cfgfile[256];
-  char weightfile[256];
-  char datafile[256];
-  char namesfile[256];
+  char cfgfile[512];
+  char weightfile[512];
+  char datafile[512];
+  int cameraIndex;
+  char videofile[512];
+  char imagefile[512];
 };
 
 #endif

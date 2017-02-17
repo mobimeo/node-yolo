@@ -32,9 +32,10 @@ function getPipe() {
 }
 
 darknet.detect({
-  cfgFile: './cfg/yolo.cfg',
-  weightFile: './yolo.weights',
-  dataFile: './cfg/coco.data',
+  cfg: './cfg/yolo.cfg',
+  weights: './yolo.weights',
+  data: './cfg/coco.data',
+  video: './test.mp4',
 }, function(modified, original, detections) {
   getPipe().write(modified);
 });

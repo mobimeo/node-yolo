@@ -194,7 +194,7 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
     int classes = option_find_int(options, classesParam, 20);
     char *name_list = option_find_str(options, namesParam, defaultNamesList);
     char **names = get_labels(name_list);
-    int cam_index = 0;
+    int cam_index = opts.cameraIndex;
     image **alphabet = load_alphabet();
     demo_names = names;
     demo_alphabet = alphabet;
@@ -205,7 +205,12 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
 
     srand(2222222);
 
-    cap = cvCaptureFromCAM(cam_index);
+    printf("%s\n", opts.videofile);
+    if (strlen(opts.videofile) > 0 ) {
+        cap = cvCaptureFromFile(opts.videofile);
+    } else {
+        cap = cvCaptureFromCAM(cam_index);
+    }
 
     if(!cap) error("Couldn't connect to webcam.\n");
 
@@ -221,6 +226,9 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
     boxes = (box *)calloc(l.w*l.h*l.n, sizeof(box));
     probs = (float **)calloc(l.w*l.h*l.n, sizeof(float *));
     for(j = 0; j < l.w*l.h*l.n; ++j) probs[j] = (float *)calloc(l.classes, sizeof(float *));
+
+
+    printf("Started\n");
 
     pthread_t fetch_thread;
     pthread_t detect_thread;
@@ -253,4 +261,90 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
         det   = in;
         det_s = in_s;
     }
+}
+
+WorkerData* start_image_demo(InputOptions opts) {
+    list *options = read_data_cfg(opts.datafile);
+    char classesParam[] = "classes";
+    char namesParam[] = "names";
+    char defaultNamesList[] = "data/names.list";
+    int classes = option_find_int(options, classesParam, 20);
+    char *name_list = option_find_str(options, namesParam, defaultNamesList);
+    char **names = get_labels(name_list);
+    int j;
+    float thresh = demo_thresh;
+    float hier_thresh = demo_hier_thresh;
+
+    image **alphabet = load_alphabet();
+    demo_names = names;
+    demo_alphabet = alphabet;
+    demo_classes = classes;
+    net = parse_network_cfg(opts.cfgfile);
+    load_weights(&net, opts.weightfile);
+    set_batch_network(&net, 1);
+
+    char * input = opts.imagefile;
+    float nms=.4;
+
+    image im = load_image_color(input,0,0);
+    image sized = resize_image(im, net.w, net.h);
+    layer l = net.layers[net.n-1];
+
+    boxes = (box *)calloc(l.w*l.h*l.n, sizeof(box));
+    probs = (float **)calloc(l.w*l.h*l.n, sizeof(float *));
+    for(j = 0; j < l.w*l.h*l.n; ++j) probs[j] = (float *)calloc(l.classes, sizeof(float *));
+
+    float *X = sized.data;
+    network_predict(net, X);
+    get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
+    if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
+    else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
+
+    image original = im;
+    image original_copy = copy_image(original);
+
+    draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
+    capture_detections(l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
+
+    image modified = im;
+    image modified_copy = copy_image(modified);
+
+    if(modified_copy.c == 3) rgbgr_image(modified_copy);
+    if(original_copy.c == 3) rgbgr_image(original_copy);
+
+    IplImage *disp = createIplImage(modified_copy);
+    char* rawData;
+    rawData = (char *) malloc(disp->imageSize);
+    memcpy(rawData, disp->imageData, disp->imageSize);
+
+    IplImage *dispOriginal = createIplImage(original_copy);
+    char* rawDataOriginal;
+    rawDataOriginal = (char *) malloc(dispOriginal->imageSize);
+    memcpy(rawDataOriginal, dispOriginal->imageData, dispOriginal->imageSize);
+
+    WorkerData* progressState = (WorkerData* ) malloc(sizeof(WorkerData));
+
+    progressState->modifiedFrame = rawData;
+    progressState->modifiedFrameSize = disp->imageSize;
+
+    progressState->originalFrame = rawDataOriginal;
+    progressState->originalFrameSize = dispOriginal->imageSize;
+
+    progressState->numberOfResults = current_results.size();
+    progressState->recognitionResults = new RecognitionResult[progressState->numberOfResults];
+
+    int i = 0;
+    for(auto const& result: current_results) {
+        progressState->recognitionResults[i] = result;
+        i++;
+    }
+
+    free_image(im);
+    free_image(sized);
+    free_image(original_copy);
+    free_image(modified_copy);
+    free(boxes);
+    free_ptrs((void **)probs, l.w*l.h*l.n);
+
+    return progressState;
 }
