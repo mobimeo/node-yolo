@@ -3,6 +3,9 @@
 Darknet is [an open source neural network framework written in C and CUDA](https://github.com/pjreddie/darknet).
 This project wraps this framework in a Node native addon.
 
+- [darknet](http://pjreddie.com/darknet/)
+- [YOLO (You only look once)](http://pjreddie.com/darknet/yolo/)
+
 ## Status
 
 Currently, the wrapper implements a demo method to run a recognition from the webcam or a video file (equivalent to `./darknet detector demo cfg/coco.data cfg/yolo.cfg yolo.weights`).
