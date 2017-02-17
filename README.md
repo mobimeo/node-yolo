@@ -1,4 +1,4 @@
-# Node Wrapper for Darknet
+# Node Wrapper for YOLO/Darknet recognition framework
 
 Darknet is [an open source neural network framework written in C and CUDA](https://github.com/pjreddie/darknet).
 This project wraps this framework in a Node native addon.
