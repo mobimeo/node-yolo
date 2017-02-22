@@ -1,8 +1,6 @@
 #ifndef DEMO_TYPES
 #define DEMO_TYPES
 
-#define Sleep(x) usleep((x)*1000)
-
 struct RecognitionResult {
    float x;
    float y;
@@ -28,6 +26,8 @@ struct InputOptions {
   int cameraIndex;
   char videofile[512];
   char imagefile[512];
+  int captureFromCamera;
+  int captureFromFile;
 };
 
 #endif

@@ -121,15 +121,18 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   v8::String::Utf8Value videoFileStr(videoFile);
   char* videofile = *videoFileStr;
 
+  int captureFromFile = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromFile").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
+  int captureFromCamera = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromCamera").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
+
   InputOptions inputOptions;
   strcpy(inputOptions.cfgfile, cfgfile);
   strcpy(inputOptions.weightfile, weightfile);
   strcpy(inputOptions.datafile, datafile);
-  if (strcmp("undefined", inputOptions.videofile) != 0) {
-    strcpy(inputOptions.videofile, videofile);
-  }
+  strcpy(inputOptions.videofile, videofile);
 
   inputOptions.cameraIndex = cameraIndex;
+  inputOptions.captureFromFile = captureFromFile;
+  inputOptions.captureFromCamera = captureFromCamera;
 
   Nan::AsyncQueueWorker(new VideoDetectionWorker<WorkerData>(&callback, progress, inputOptions));
 }

@@ -13,3 +13,4 @@ data.raw
 *.raw
 *.jpg
 *.list
+npm-debug.log

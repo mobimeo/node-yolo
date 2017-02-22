@@ -170,7 +170,6 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
     }
 
     progress.Send(&progressState, sizeof( progressState ));
-    Sleep(1);
 
     free(rawData);
     free(rawDataOriginal);
@@ -205,8 +204,7 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
 
     srand(2222222);
 
-    printf("%s\n", opts.videofile);
-    if (strlen(opts.videofile) > 0 ) {
+    if (opts.captureFromFile) {
         cap = cvCaptureFromFile(opts.videofile);
     } else {
         cap = cvCaptureFromCAM(cam_index);
@@ -296,6 +294,13 @@ WorkerData* start_image_demo(InputOptions opts) {
 
     float *X = sized.data;
     network_predict(net, X);
+    if(l.type == DETECTION){
+        printf("detection \n");
+    } else if (l.type == REGION){
+        printf("region \n");
+    } else {
+        printf("error: Last layer must produce detections\n");
+    }
     get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
     if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
     else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
