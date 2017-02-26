@@ -22,7 +22,8 @@
       ],
       "include_dirs": [
         "./src",
-        "<!(node -e \"require('nan')\")"
+        "<!(node -e \"require('nan')\")",
+        "/usr/local/cuda/include"
       ],
       "defines": [
         "OPENCV",

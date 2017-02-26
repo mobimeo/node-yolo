@@ -15,7 +15,6 @@ function getPipe() {
         '-f', 'rawvideo',
         '-pix_fmt', 'bgr24',
         '-s', '1280x720',
-        '-r', '1',
         '-i', '-',
         '-c:v', 'libx264',
         '-an',
@@ -35,7 +34,6 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  video: './test.mp4',
 }, function(modified, original, detections) {
   getPipe().write(modified);
 });

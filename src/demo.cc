@@ -3,22 +3,23 @@
 #include "demo.h"
 #include <vector>
 
-extern "C" {
-    #include <sys/time.h>
-    #include "darknet/network.h"
-    #include "darknet/detection_layer.h"
-    #include "darknet/region_layer.h"
-    #include "darknet/cost_layer.h"
-    #include "darknet/utils.h"
-    #include "darknet/parser.h"
-    #include "darknet/box.h"
-    #include "darknet/image.h"
-    #include "darknet/demo.h"
-    #include "darknet/option_list.h"
-    #include "darknet/data.h"
-    #include "opencv2/highgui/highgui_c.h"
-    #include "opencv2/imgproc/imgproc_c.h"
 
+#include <sys/time.h>
+#include "darknet/network.h"
+#include "darknet/detection_layer.h"
+#include "darknet/region_layer.h"
+#include "darknet/cost_layer.h"
+#include "darknet/utils.h"
+#include "darknet/parser.h"
+#include "darknet/box.h"
+#include "darknet/image.h"
+#include "darknet/demo.h"
+#include "darknet/option_list.h"
+#include "darknet/data.h"
+#include "opencv2/highgui/highgui_c.h"
+#include "opencv2/imgproc/imgproc_c.h"
+
+extern "C" {
     image get_image_from_stream(CvCapture *cap);
 }
 
