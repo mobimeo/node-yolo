@@ -19,7 +19,7 @@ class VideoDetectionWorker : public AsyncProgressWorkerBase<T> {
 
   void HandleProgressCallback(const T *data, size_t size) {
     HandleScope scope;
-    const int argc = 3;
+    const int argc = 4;
     v8::Local<v8::Array> results = Nan::New<v8::Array>();
     for(int i = 0; i < data->numberOfResults; i++) {
         RecognitionResult result = data->recognitionResults[i];
@@ -34,10 +34,15 @@ class VideoDetectionWorker : public AsyncProgressWorkerBase<T> {
         i++;
     }
 
+    v8::Local<v8::Object> dimensions = Nan::New<v8::Object>();
+    dimensions->Set(Nan::New("width").ToLocalChecked(), Nan::New<v8::Number>(data->frameWidth));
+    dimensions->Set(Nan::New("height").ToLocalChecked(), Nan::New<v8::Number>(data->frameHeight));
+
     v8::Local<v8::Value> argv[argc] = {
         Nan::NewBuffer(data->modifiedFrame, data->modifiedFrameSize).ToLocalChecked(),
         Nan::NewBuffer(data->originalFrame, data->originalFrameSize).ToLocalChecked(),
         results,
+        dimensions
     };
 
     progressCb->Call(argc, argv);

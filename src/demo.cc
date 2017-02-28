@@ -3,7 +3,6 @@
 #include "demo.h"
 #include <vector>
 
-
 #include <sys/time.h>
 #include "darknet/network.h"
 #include "darknet/detection_layer.h"
@@ -154,6 +153,9 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
     memcpy(rawDataOriginal, dispOriginal->imageData, dispOriginal->imageSize);
 
     WorkerData progressState;
+
+    progressState.frameWidth = original.w;
+    progressState.frameHeight = original.h;
 
     progressState.modifiedFrame = rawData;
     progressState.modifiedFrameSize = disp->imageSize;

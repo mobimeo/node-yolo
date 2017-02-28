@@ -17,6 +17,8 @@ struct WorkerData {
   int modifiedFrameSize;
   RecognitionResult* recognitionResults;
   int numberOfResults;
+  int frameWidth;
+  int frameHeight;
 };
 
 struct InputOptions {

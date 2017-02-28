@@ -3,26 +3,21 @@ const fs = require('fs');
 const spawn = require('child_process').spawn;
 let ffmpeg = null;
 
-function getPipe() {
+function getPipe(dimensions) {
   if (!ffmpeg) {
     ffmpeg = spawn('ffmpeg',
       [ '-y',
-        '-re',
         '-loglevel', 'verbose',
-        // '-f', 'avfoundation',
-        // '-r', '30',
-        // '-i', '0',
+        '-re',
         '-f', 'rawvideo',
         '-pix_fmt', 'bgr24',
-        '-s', '1280x720',
+        '-s', `${dimensions.width}x${dimensions.height}`,
         '-i', '-',
-        '-c:v', 'libx264',
-        '-an',
-        '-s', '1280x720',
         // 'http://localhost:8090/feed1.ffm'
+        '-r', '10',
         'output.mp4'
       ], {
-        stdio: ['pipe', 'ignore', 'ignore'],
+        stdio: ['pipe', process.stdout, process.stderr],
       });
     return ffmpeg.stdin;
   } else {
@@ -34,6 +29,6 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-}, function(modified, original, detections) {
-  getPipe().write(modified);
+}, function(modified, original, detections, dimensions) {
+  getPipe(dimensions).write(modified);
 });
