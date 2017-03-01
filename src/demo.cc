@@ -172,9 +172,6 @@ void callback(const typename Nan::AsyncProgressWorkerBase<WorkerData>::Execution
 
     progress.Send(&progressState, sizeof( progressState ));
 
-    free(rawData);
-    free(rawDataOriginal);
-
     cvReleaseImage(&disp);
     free_image(modified_copy);
 
