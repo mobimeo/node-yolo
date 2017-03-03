@@ -17,7 +17,7 @@ This module requires OpenCV installed. First, you need to compile [this fork](ht
 ```sh
 git clone git@github.com:OrKoN/darknet.git
 cd darknet
-make OPENCV=1
+make OPENCV=1 # optionally GPU=1
 make install # by default installed to /usr/local
 ```
 
@@ -26,7 +26,7 @@ After that you can process with the installation via NPM.
 ## Installation
 
 ```sh
-npm i @moovel/darknet --save
+npm i @moovel/yolo --save
 ```
 
 ## Usage
@@ -47,8 +47,8 @@ darknet.detect({
 }, function(modified, original, detections) {
   /**
 
-  modified - raw frame with detections drawn, bgr24 format
-  original - raw frame, as captured by the webcam/video, bgr24 format,
+  modified - raw frame with detections drawn, rgb24 format
+  original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
 
   Example detections:
@@ -98,8 +98,8 @@ darknet.detectImage({
 }, function(modified, original, detections) {
   /**
 
-  modified - raw frame with detections drawn, bgr24 format
-  original - raw frame, as captured by the webcam/video, bgr24 format,
+  modified - raw frame with detections drawn, rgb24 format
+  original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
 
   Example detections:
@@ -139,6 +139,6 @@ darknet.detectImage({
 After that you can compress original frames with ffmpeg:
 
 ```sh
-ffmpeg -f rawvideo -s 768x576 -pix_fmt bgr24 -i data.raw data.jpg
+ffmpeg -f rawvideo -s 768x576 -pix_fmt rgb24 -i data.raw data.jpg
 ```
 
