@@ -9,9 +9,9 @@ module.exports = {
     const captureFromCam = !captureFromFile;
     const cameraIndex = cfg.cameraIndex || 0;
     darknet.detect({
-      cfg: './cfg/yolo.cfg',
-      weights: './yolo.weights',
-      data: './cfg/coco.data',
+      cfg: cfg.cfg,
+      weights: cfg.weights,
+      data: cfg.data,
       captureFromFile,
       video: cfg.video,
       captureFromCam,
