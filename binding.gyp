@@ -19,6 +19,7 @@
       "include_dirs": [
         "./src",
         "<!(node -e \"require('nan')\")",
+        "/usr/local/cuda/include"
       ],
       "cflags": [
         "-Wall",
@@ -41,6 +42,7 @@
             "GPU"
           ],
           "libraries": [
+            "-L/usr/local/cuda/lib",
             "-lcuda",
             "-lcudart",
             "-lcublas",
