@@ -84,7 +84,7 @@ function main (query) {
     case 'opencv':
       return hasSystemLib(query)
     case 'cuda':
-      return hasSystemLib(query)
+      return true
     default:
       throw new Error('Unknown library: ' + query)
   }
