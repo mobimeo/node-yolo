@@ -10,7 +10,7 @@ function getPipe(dimensions) {
         '-loglevel', 'verbose',
         '-re',
         '-f', 'rawvideo',
-        '-pix_fmt', 'bgr24',
+        '-pix_fmt', 'rgb24',
         '-s', `${dimensions.width}x${dimensions.height}`,
         '-i', '-',
         // 'http://localhost:8090/feed1.ffm'

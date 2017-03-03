@@ -1,4 +1,8 @@
 {
+  "variables": {
+    'with_opencv%': '<!(node ./util/has_lib.js opencv)',
+    'with_cuda%': '<!(node ./util/has_lib.js cuda)'
+  },
   "targets": [
     {
       "target_name": "darknet",
@@ -10,30 +14,45 @@
         "-lm",
         "-pthread",
         "-ldarknet",
-        "-lopencv_core",
-        "-lopencv_highgui",
-        "-L/usr/local/cuda/lib64",
-        "-L/usr/local/cuda/lib",
-        "-lcuda",
-        "-lcudart",
-        "-lcublas",
-        "-lcurand",
         "-lstdc++"
       ],
       "include_dirs": [
         "./src",
         "<!(node -e \"require('nan')\")",
-        "/usr/local/cuda/include"
-      ],
-      "defines": [
-        "OPENCV",
-        "GPU"
       ],
       "cflags": [
         "-Wall",
         "-Wfatal-errors",
         "-fPIC",
         "-Ofast"
+      ],
+      "conditions": [
+        ['with_opencv=="true"', {
+          "defines": [
+            "OPENCV",
+          ],
+          "libraries": [
+            "-lopencv_core",
+            "-lopencv_highgui"
+          ]
+        }],
+        ['with_cuda=="true"', {
+          "defines": [
+            "GPU"
+          ],
+          "libraries": [
+            "-L/usr/local/cuda/lib",
+            "-lcuda",
+            "-lcudart",
+            "-lcublas",
+            "-lcurand"
+          ],
+          "include_dirs": [
+            "./src",
+            "<!(node -e \"require('nan')\")",
+            "/usr/local/cuda/include"
+          ],
+        }]
       ]
     }
   ]
