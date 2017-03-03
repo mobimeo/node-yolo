@@ -1,14 +1,19 @@
-# Node Wrapper for YOLO/Darknet recognition framework
+# Node.js Wrapper for YOLO/Darknet recognition framework
 
 Darknet is [an open source neural network framework written in C and CUDA](https://github.com/pjreddie/darknet).
-This project wraps this framework in a Node native addon.
+This project wraps this framework in a Node.js native addon.
 
 - [darknet](http://pjreddie.com/darknet/)
 - [YOLO (You only look once)](http://pjreddie.com/darknet/yolo/)
 
 ## Status
 
-Currently, the wrapper implements a demo method to run a recognition from the webcam or a video file (equivalent to `./darknet detector demo cfg/coco.data cfg/yolo.cfg yolo.weights`).
+Currently, the wrapper implements a demo method to run a recognition from the webcam/video or an image file. Equivalent to
+
+```sh
+./darknet detector demo cfg/coco.data cfg/yolo.cfg yolo.weights
+./darknet detect cfg/yolo.cfg yolo.weights data/dog.jpg
+```
 
 ## Prerequisites
 
@@ -26,17 +31,17 @@ After that you can process with the installation via NPM.
 ## Installation
 
 ```sh
-npm i @moovel/yolo --save
+npm install @moovel/yolo --save
 ```
 
 ## Usage
 
-You need to download `cfg`, `data` folders and weight files you need to use from the darknet project.
+Either download you own `cfg`, `data` folders and `.weight` files from the darknet project or use the ones included in `test` folder (see also [test/readme.md](test/readme.md)). You also can find there the examples from below.
 
 Detect a video from camera or a file:
 
 ```js
-const darknet = require('@moovel/darknet');
+const darknet = require('@moovel/yolo');
 
 darknet.detect({
   cfg: './cfg/yolo.cfg',
@@ -88,13 +93,13 @@ darknet.detect({
 Detect on a single image:
 
 ```js
-const darknet = require('@moovel/darknet');
+const darknet = require('@moovel/yolo');
 
 darknet.detectImage({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  image: './test.jpeg', // detect an image
+  image: './data/dog.jpg',
 }, function(modified, original, detections) {
   /**
 
@@ -131,7 +136,6 @@ darknet.detectImage({
       h: 0.100614033639431,
       prob: 0.3225017189979553,
       name: 'clock' } ]
-
   */
 });
 ```
