@@ -13,9 +13,8 @@ function getPipe(dimensions) {
         '-pix_fmt', 'rgb24',
         '-s', `${dimensions.width}x${dimensions.height}`,
         '-i', '-',
-        // 'http://localhost:8090/feed1.ffm'
         '-r', '10',
-        'output.mp4'
+        'detected.mp4'
       ], {
         stdio: ['pipe', process.stdout, process.stderr],
       });

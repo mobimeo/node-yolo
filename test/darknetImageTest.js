@@ -5,7 +5,7 @@ darknet.detectImage({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  image: './test.jpg',
+  image: './data/dog.jpg',
 }, function(modified, original, detections) {
   console.log(modified.length, original.length, detections);
   fs.writeFileSync('./data.modified.raw', modified);
