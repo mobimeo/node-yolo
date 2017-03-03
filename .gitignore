@@ -5,3 +5,4 @@ test/yolo.weights
 test/data.modified.raw
 test/data.raw
 npm-debug.log
+*.ffm
