@@ -129,6 +129,11 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   int captureFromFile = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromFile").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
   int captureFromCamera = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromCamera").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
 
+  printf("Input options \n");
+  printf("cfgfile %s\n", cfgfile);
+  printf("weightfile %s\n", weightfile);
+  printf("datafile %s\n", datafile);
+
   InputOptions inputOptions;
   strcpy(inputOptions.cfgfile, cfgfile);
   strcpy(inputOptions.weightfile, weightfile);
