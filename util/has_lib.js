@@ -79,12 +79,24 @@ function hasLdconfig () {
   }
 }
 
+/**
+* Check if cuda is present
+* @return Boolean exists
+*/
+function hasCuda () {
+  try {
+    return childProcess.execSync('[ -d /usr/local/cuda ] && echo "Yes"').length > 0;
+  } catch (err) {
+    return false
+  }
+}
+
 function main (query) {
   switch (query) {
     case 'opencv':
       return hasSystemLib(query)
     case 'cuda':
-      return true
+      return hasCuda();
     default:
       throw new Error('Unknown library: ' + query)
   }

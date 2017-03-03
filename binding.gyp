@@ -1,7 +1,7 @@
 {
   "variables": {
-    'with_opencv%': '<!(node ./has_lib.js opencv)',
-    'with_cuda%': '<!(node ./has_lib.js cuda)'
+    'with_opencv%': '<!(node ./util/has_lib.js opencv)',
+    'with_cuda%': '<!(node ./util/has_lib.js cuda)'
   },
   "targets": [
     {
@@ -19,7 +19,6 @@
       "include_dirs": [
         "./src",
         "<!(node -e \"require('nan')\")",
-        "/usr/local/cuda/include"
       ],
       "cflags": [
         "-Wall",
@@ -47,7 +46,12 @@
             "-lcudart",
             "-lcublas",
             "-lcurand"
-          ]
+          ],
+          "include_dirs": [
+            "./src",
+            "<!(node -e \"require('nan')\")",
+            "/usr/local/cuda/include"
+          ],
         }]
       ]
     }
