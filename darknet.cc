@@ -72,7 +72,7 @@ class ImageDetectionWorker : public AsyncWorker {
   // so it is safe to use V8 again
   void HandleOKCallback () {
     HandleScope scope;
-    const int argc = 3;
+    const int argc = 4;
     v8::Local<v8::Array> results = Nan::New<v8::Array>();
     for(int i = 0; i < output->numberOfResults; i++) {
         RecognitionResult result = output->recognitionResults[i];
@@ -87,10 +87,15 @@ class ImageDetectionWorker : public AsyncWorker {
         i++;
     }
 
+    v8::Local<v8::Object> dimensions = Nan::New<v8::Object>();
+    dimensions->Set(Nan::New("width").ToLocalChecked(), Nan::New<v8::Number>(output->frameWidth));
+    dimensions->Set(Nan::New("height").ToLocalChecked(), Nan::New<v8::Number>(output->frameHeight));
+
     v8::Local<v8::Value> argv[argc] = {
         Nan::NewBuffer(output->modifiedFrame, output->modifiedFrameSize).ToLocalChecked(),
         Nan::NewBuffer(output->originalFrame, output->originalFrameSize).ToLocalChecked(),
         results,
+        dimensions
     };
 
     callback->Call(argc, argv);

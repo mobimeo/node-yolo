@@ -6,8 +6,8 @@ darknet.detectImage({
   weights: './yolo.weights',
   data: './cfg/coco.data',
   image: './data/dog.jpg',
-}, function(modified, original, detections) {
-  console.log(modified.length, original.length, detections);
+}, function(modified, original, detections, dimensions) {
+  console.log(modified.length, original.length, detections, dimensions);
   fs.writeFileSync('./data.modified.raw', modified);
   // ffmpeg -f rawvideo -s 768x576 -pix_fmt bgr24 -i data.raw data.jpg
   fs.writeFileSync('./data.raw', original);

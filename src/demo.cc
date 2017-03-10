@@ -340,6 +340,9 @@ WorkerData* start_image_demo(InputOptions opts) {
     progressState->numberOfResults = current_results.size();
     progressState->recognitionResults = new RecognitionResult[progressState->numberOfResults];
 
+    progressState->frameWidth = original.w;
+    progressState->frameHeight = original.h;
+
     int i = 0;
     for(auto const& result: current_results) {
         progressState->recognitionResults[i] = result;
