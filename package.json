@@ -1,15 +1,28 @@
 {
   "name": "@moovel/yolo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "NodeJS interface for YOLO/Darknet",
+  "keywords": [
+    "yolo",
+    "darknet",
+    "recognition"
+  ],
+  "homepage": "https://github.com/moovel/node-yolo",
+  "bugs": {
+    "url": "https://github.com/moovel/node-yolo/issues"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/moovel/node-yolo.git"
+  },
   "main": "darknet.js",
   "gypfile": true,
   "dependencies": {
     "bindings": "~1.2.1",
     "nan": "^2.0.0"
   },
-  "devDependencies": {
-    "fluent-ffmpeg": "^2.1.0"
-  },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=4"
+  }
 }
