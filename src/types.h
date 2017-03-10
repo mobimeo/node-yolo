@@ -30,6 +30,8 @@ struct InputOptions {
   char imagefile[512];
   int captureFromCamera;
   int captureFromFile;
+  float thresh;
+  float hierThresh;
 };
 
 #endif

@@ -2,6 +2,7 @@ node_modules
 build/
 .DS_Store
 yolo.weights
+test/yolo.weights
 data
 cfg
 *.jpeg
@@ -13,3 +14,4 @@ data.raw
 test/data
 test/cfg
 *.ffm
+test/detected.mp4

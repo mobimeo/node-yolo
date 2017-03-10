@@ -129,10 +129,8 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   int captureFromFile = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromFile").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
   int captureFromCamera = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromCamera").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
 
-  printf("Input options \n");
-  printf("cfgfile %s\n", cfgfile);
-  printf("weightfile %s\n", weightfile);
-  printf("datafile %s\n", datafile);
+  float thresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("thresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
+  float hierThresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("hierThresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
 
   InputOptions inputOptions;
   strcpy(inputOptions.cfgfile, cfgfile);
@@ -143,6 +141,8 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   inputOptions.cameraIndex = cameraIndex;
   inputOptions.captureFromFile = captureFromFile;
   inputOptions.captureFromCamera = captureFromCamera;
+  inputOptions.thresh = thresh;
+  inputOptions.hierThresh = hierThresh;
 
   Nan::AsyncQueueWorker(new VideoDetectionWorker<WorkerData>(&callback, progress, inputOptions));
 }
@@ -169,11 +169,17 @@ void detectImage(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   v8::String::Utf8Value imageFileStr(imageFile);
   char* imagefile = *imageFileStr;
 
+  float thresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("thresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
+  float hierThresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("hierThresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
+
   InputOptions inputOptions;
   strcpy(inputOptions.cfgfile, cfgfile);
   strcpy(inputOptions.weightfile, weightfile);
   strcpy(inputOptions.datafile, datafile);
   strcpy(inputOptions.imagefile, imagefile);
+
+  inputOptions.thresh = thresh;
+  inputOptions.hierThresh = hierThresh;
 
   Nan::AsyncQueueWorker(new ImageDetectionWorker(callback, inputOptions));
 }

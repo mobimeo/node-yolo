@@ -194,6 +194,8 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
     char *name_list = option_find_str(options, namesParam, defaultNamesList);
     char **names = get_labels(name_list);
     int cam_index = opts.cameraIndex;
+    demo_thresh = opts.thresh;
+    demo_hier_thresh = opts.hierThresh;
     image **alphabet = load_alphabet();
     demo_names = names;
     demo_alphabet = alphabet;
@@ -270,8 +272,8 @@ WorkerData* start_image_demo(InputOptions opts) {
     char *name_list = option_find_str(options, namesParam, defaultNamesList);
     char **names = get_labels(name_list);
     int j;
-    float thresh = demo_thresh;
-    float hier_thresh = demo_hier_thresh;
+    float thresh = opts.thresh;
+    float hier_thresh = opts.hierThresh;
 
     image **alphabet = load_alphabet();
     demo_names = names;

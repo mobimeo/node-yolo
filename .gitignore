@@ -6,3 +6,4 @@ test/data.modified.raw
 test/data.raw
 npm-debug.log
 *.ffm
+test/detected.mp4

@@ -28,6 +28,7 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
+  cameraIndex: 0,
 }, function(modified, original, detections, dimensions) {
   getPipe(dimensions).write(modified);
 });
