@@ -1,7 +1,7 @@
 {
-  "name": "@moovel/darknet",
+  "name": "@moovel/yolo",
   "version": "0.1.1",
-  "description": "NodeJS interface for Darknet",
+  "description": "NodeJS interface for YOLO/Darknet",
   "main": "darknet.js",
   "gypfile": true,
   "dependencies": {
