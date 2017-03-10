@@ -28,6 +28,12 @@ make install # by default installed to /usr/local
 
 After that you can process with the installation via NPM.
 
+The fork is required because it contains [a few important changes](https://github.com/pjreddie/darknet/compare/master...OrKoN:master) to the origin source code which allow using darknet with NodeJS:
+
+- Makefile is extended to build a static library (darknet.a).
+- Makefile is extended with `install` and `uninstall` commands which install the library globally so that this module can easily find and link it.
+- All darknet functions in header files are marked with `extern "C"` if they are included in a C++ program (such as a NodeJS module).
+
 ## Installation
 
 ```sh
@@ -104,12 +110,13 @@ darknet.detectImage({
   image: './data/dog.jpg',
   thresh: 0.24,
   hierThresh: 0.5,
-}, function(modified, original, detections) {
+}, function(modified, original, detections, dimensions) {
   /**
 
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
+  dimenstions - image dimensions
 
   Example detections:
 
