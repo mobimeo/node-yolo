@@ -44,7 +44,7 @@ npm install @moovel/yolo --save
 
 ## Usage
 
-Either download you own `cfg`, `data` folders and `.weight` files from the darknet project or use the ones included in `test` folder (see also [test/readme.md](test/README.md)). You also can find there the examples from below.
+Either download your own `cfg`, `data` folders and `.weight` files from the darknet project or use the ones included in `test` folder (see also [test/readme.md](test/README.md)). You also can find there the examples from below.
 
 Detect a video from camera or a file:
 
