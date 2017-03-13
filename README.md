@@ -3,6 +3,8 @@
 Darknet is [an open source neural network framework written in C and CUDA](https://github.com/pjreddie/darknet).
 This project wraps this framework in a Node.js native addon.
 
+<img src="http://lab.moovel.com/content/3-blog/what-you-get-is-what-you-see-nodejs-yolo/yolo-micro-prv.gif" width="458px" height="258px">
+
 - [darknet](http://pjreddie.com/darknet/)
 - [YOLO (You only look once)](http://pjreddie.com/darknet/yolo/)
 
