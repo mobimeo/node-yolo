@@ -57,8 +57,8 @@ darknet.detect({
   data: './cfg/coco.data',
   cameraIndex: 0, // optional, default: 0,
   video: "./test.mp4", // optional, forces to use the video file instead of a camera
-  thresh: 0.24,
-  hierThresh: 0.5,
+  thresh: 0.24, // optional, default: 0.24
+  hierThresh: 0.5, // optional, default: 0.5
 }, function(modified, original, detections) {
   /**
 
@@ -110,8 +110,8 @@ darknet.detectImage({
   weights: './yolo.weights',
   data: './cfg/coco.data',
   image: './data/dog.jpg',
-  thresh: 0.24,
-  hierThresh: 0.5,
+  thresh: 0.24, // optional, default: 0.24
+  hierThresh: 0.5, // optional, default: 0.5,
 }, function(modified, original, detections, dimensions) {
   /**
 
