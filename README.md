@@ -59,12 +59,13 @@ darknet.detect({
   video: "./test.mp4", // optional, forces to use the video file instead of a camera
   thresh: 0.24, // optional, default: 0.24
   hierThresh: 0.5, // optional, default: 0.5
-}, function(modified, original, detections) {
+}, function(modified, original, detections, dimensions) {
   /**
 
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
+  dimenstions - image width and height
 
   Example detections:
 
@@ -118,7 +119,7 @@ darknet.detectImage({
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
-  dimenstions - image dimensions
+  dimenstions - image width and height
 
   Example detections:
 
