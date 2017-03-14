@@ -22,7 +22,7 @@ Currently, the wrapper implements a demo method to run a recognition from the we
 This module requires OpenCV installed. First, you need to compile [this fork](https://github.com/OrKoN/darknet) of darknet with OpenCV support (optionally, with CUDA support):
 
 ```sh
-git clone git@github.com:OrKoN/darknet.git
+git clone https://github.com/OrKoN/darknet
 cd darknet
 make OPENCV=1 # optionally GPU=1
 make install # by default installed to /usr/local
