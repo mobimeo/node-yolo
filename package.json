@@ -1,6 +1,6 @@
 {
   "name": "@moovel/yolo",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "NodeJS interface for YOLO/Darknet",
   "keywords": [
     "yolo",
