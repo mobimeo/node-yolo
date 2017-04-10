@@ -29,6 +29,7 @@ darknet.detect({
   weights: './yolo.weights',
   data: './cfg/coco.data',
   cameraIndex: 0,
+  frameSkip: 0, // how many frames to skip, when calling the callback
 }, function(modified, original, detections, dimensions) {
   getPipe(dimensions).write(modified);
 });

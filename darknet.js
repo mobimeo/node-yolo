@@ -12,6 +12,7 @@ module.exports = {
     const cameraIndex = cfg.cameraIndex || 0;
     const thresh = cfg.thresh || 0.24;
     const hierThresh = cfg.hierThresh || 0.5;
+    const frameSkip = cfg.frameSkip || 0;
     darknet.detect({
       cfg: cfg.cfg,
       weights: cfg.weights,
@@ -21,7 +22,8 @@ module.exports = {
       captureFromCam,
       cameraIndex,
       thresh,
-      hierThresh
+      hierThresh,
+      frameSkip,
     }, cb);
   }
 };

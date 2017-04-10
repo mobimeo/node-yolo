@@ -32,6 +32,7 @@ struct InputOptions {
   int captureFromFile;
   float thresh;
   float hierThresh;
+  int frameSkip;
 };
 
 #endif

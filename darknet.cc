@@ -133,6 +133,7 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
 
   int captureFromFile = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromFile").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
   int captureFromCamera = Nan::To<int>(Nan::Get(opts, Nan::New("captureFromCamera").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
+  int frameSkip = Nan::To<int>(Nan::Get(opts, Nan::New("frameSkip").ToLocalChecked()).ToLocalChecked()).FromMaybe(0);
 
   float thresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("thresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
   float hierThresh = (float) Nan::To<double>(Nan::Get(opts, Nan::New("hierThresh").ToLocalChecked()).ToLocalChecked()).FromMaybe(0.0);
@@ -148,6 +149,7 @@ void detect(const Nan::FunctionCallbackInfo<v8::Value>& arguments) {
   inputOptions.captureFromCamera = captureFromCamera;
   inputOptions.thresh = thresh;
   inputOptions.hierThresh = hierThresh;
+  inputOptions.frameSkip = frameSkip;
 
   Nan::AsyncQueueWorker(new VideoDetectionWorker<WorkerData>(&callback, progress, inputOptions));
 }

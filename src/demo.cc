@@ -194,6 +194,7 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
     char *name_list = option_find_str(options, namesParam, defaultNamesList);
     char **names = get_labels(name_list);
     int cam_index = opts.cameraIndex;
+    int delay = opts.frameSkip;
     demo_thresh = opts.thresh;
     demo_hier_thresh = opts.hierThresh;
     image **alphabet = load_alphabet();
@@ -256,10 +257,18 @@ void start_demo(InputOptions opts, const typename Nan::AsyncProgressWorkerBase<W
         pthread_join(fetch_thread, 0);
         pthread_join(detect_thread, 0);
 
-        callback(progress);
+        if (delay == 0) {
+            callback(progress);
+        }
+
 
         det   = in;
         det_s = in_s;
+
+        --delay;
+        if(delay < 0){
+            delay = opts.frameSkip;
+        }
     }
 }
 
