@@ -3,6 +3,8 @@
 Darknet is [an open source neural network framework written in C and CUDA](https://github.com/pjreddie/darknet).
 This project wraps this framework in a Node.js native addon.
 
+<img src="https://lab.moovel.com/content/uploads/yolo-micro-prv.gif" width="458px" height="258px">
+
 - [darknet](http://pjreddie.com/darknet/)
 - [YOLO (You only look once)](http://pjreddie.com/darknet/yolo/)
 
@@ -20,7 +22,7 @@ Currently, the wrapper implements a demo method to run a recognition from the we
 This module requires OpenCV installed. First, you need to compile [this fork](https://github.com/OrKoN/darknet) of darknet with OpenCV support (optionally, with CUDA support):
 
 ```sh
-git clone git@github.com:OrKoN/darknet.git
+git clone https://github.com/OrKoN/darknet
 cd darknet
 make OPENCV=1 # optionally GPU=1
 make install # by default installed to /usr/local
@@ -42,7 +44,7 @@ npm install @moovel/yolo --save
 
 ## Usage
 
-Either download you own `cfg`, `data` folders and `.weight` files from the darknet project or use the ones included in `test` folder (see also [test/readme.md](test/readme.md)). You also can find there the examples from below.
+Either download your own `cfg`, `data` folders and `.weight` files from the darknet project or use the ones included in `test` folder (see also [test/readme.md](test/README.md)). You also can find there the examples from below.
 
 Detect a video from camera or a file:
 
@@ -55,14 +57,15 @@ darknet.detect({
   data: './cfg/coco.data',
   cameraIndex: 0, // optional, default: 0,
   video: "./test.mp4", // optional, forces to use the video file instead of a camera
-  thresh: 0.24,
-  hierThresh: 0.5,
-}, function(modified, original, detections) {
+  thresh: 0.24, // optional, default: 0.24
+  hierThresh: 0.5, // optional, default: 0.5
+}, function(modified, original, detections, dimensions) {
   /**
 
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
+  dimenstions - image width and height
 
   Example detections:
 
@@ -108,15 +111,15 @@ darknet.detectImage({
   weights: './yolo.weights',
   data: './cfg/coco.data',
   image: './data/dog.jpg',
-  thresh: 0.24,
-  hierThresh: 0.5,
+  thresh: 0.24, // optional, default: 0.24
+  hierThresh: 0.5, // optional, default: 0.5,
 }, function(modified, original, detections, dimensions) {
   /**
 
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
-  dimenstions - image dimensions
+  dimenstions - image width and height
 
   Example detections:
 

@@ -31,7 +31,6 @@ class VideoDetectionWorker : public AsyncProgressWorkerBase<T> {
         obj->Set(Nan::New("prob").ToLocalChecked(), Nan::New<v8::Number>(result.prob));
         obj->Set(Nan::New("name").ToLocalChecked(), Nan::New<v8::String>(result.name).ToLocalChecked());
         results->Set(i, obj);
-        i++;
     }
 
     v8::Local<v8::Object> dimensions = Nan::New<v8::Object>();
@@ -84,7 +83,6 @@ class ImageDetectionWorker : public AsyncWorker {
         obj->Set(Nan::New("prob").ToLocalChecked(), Nan::New<v8::Number>(result.prob));
         obj->Set(Nan::New("name").ToLocalChecked(), Nan::New<v8::String>(result.name).ToLocalChecked());
         results->Set(i, obj);
-        i++;
     }
 
     v8::Local<v8::Object> dimensions = Nan::New<v8::Object>();
