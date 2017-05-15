@@ -6,3 +6,19 @@ wget http://pjreddie.com/media/files/yolo.weights
 ```
 
 All config and data files courtesy of https://github.com/pjreddie/darknet
+
+Note: you will need `ffmpeg` to run the `darknetTest.js`
+
+## Run the examples
+
+To test with your webcam:
+
+```
+node darknetTest.js
+```
+
+To test on an image:
+
+```
+node darknetImageTest.js
+```
