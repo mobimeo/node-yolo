@@ -9,7 +9,7 @@ darknet.detectImage({
 }, function(modified, original, detections, dimensions) {
   console.log(modified.length, original.length, detections, dimensions);
   fs.writeFileSync('./data.modified.raw', modified);
-  // ffmpeg -f rawvideo -s 768x576 -pix_fmt rgb24 -i data.raw data.jpg
-  fs.writeFileSync('./data.raw', original);
   // ffmpeg -f rawvideo -s 768x576 -pix_fmt rgb24 -i data.modified.raw data.jpg
+  fs.writeFileSync('./data.raw', original);
+  // ffmpeg -f rawvideo -s 768x576 -pix_fmt rgb24 -i data.raw data.jpg
 });
