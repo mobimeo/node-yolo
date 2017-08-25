@@ -96,7 +96,7 @@ void *detect_in_thread(void *ptr) {
     if(l.type == DETECTION){
         get_detection_boxes(l, 1, 1, demo_thresh, probs, boxes, 0);
     } else if (l.type == REGION){
-        get_region_boxes(l, 1, 1, demo_thresh, probs, boxes, 0, 0, demo_hier_thresh);
+        get_region_boxes(l, 1, 1, net.w, net.h, demo_thresh, probs, boxes, 0, 0, demo_hier_thresh, 1);
     } else {
         error("Last layer must produce detections\n");
     }
@@ -312,7 +312,7 @@ WorkerData* start_image_demo(InputOptions opts) {
     } else {
         printf("error: Last layer must produce detections\n");
     }
-    get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
+    get_region_boxes(l, 1, 1, net.w, net.h, demo_thresh, probs, boxes, 0, 0, hier_thresh, 1);
     if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
     else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
