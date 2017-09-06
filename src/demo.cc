@@ -96,7 +96,7 @@ void *detect_in_thread(void *ptr) {
     if(l.type == DETECTION){
         get_detection_boxes(l, 1, 1, demo_thresh, probs, boxes, 0);
     } else if (l.type == REGION){
-        get_region_boxes(l, 1, 1, demo_thresh, probs, boxes, 0, 0, demo_hier_thresh);
+        get_region_boxes(l, 1, 1, net.w, net.h, demo_thresh, probs, boxes, 0, 0, 0, demo_hier_thresh, 1);
     } else {
         error("Last layer must produce detections\n");
     }
@@ -109,7 +109,7 @@ void *detect_in_thread(void *ptr) {
     demo_index = (demo_index + 1)%FRAMES;
 
     original_frame = copy_image(det);
-    draw_detections(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
+    draw_detections(det, l.w*l.h*l.n, demo_thresh, boxes, probs, 0, demo_names, demo_alphabet, demo_classes);
     capture_detections(l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
     modified_frame = copy_image(det);
 
@@ -312,14 +312,14 @@ WorkerData* start_image_demo(InputOptions opts) {
     } else {
         printf("error: Last layer must produce detections\n");
     }
-    get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
+    get_region_boxes(l, 1, 1, net.w, net.h, demo_thresh, probs, boxes, 0, 0, 0, hier_thresh, 1);
     if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
     else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
     image original = im;
     image original_copy = copy_image(original);
 
-    draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
+    draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, 0, names, alphabet, l.classes);
     capture_detections(l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
 
     image modified = im;
