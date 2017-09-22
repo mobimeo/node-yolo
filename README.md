@@ -23,7 +23,7 @@ Requires:
 
 - Modern Node and NPM versions (tested with latest LTS release Node v6.*.*, npm 3.*.*, supposed to work with the newer versions as well)
 - OpenCV (version 2, for example, 2.4.9.1) to be installed on your system
-- If you are on a mac: macOS 10.12 Sierra or newer, Apple LLVM version 8.0.0 (xcode 8.2, check version with `clang -v`). For GPU support, Nvidia [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)
+- If you are on a mac: macOS 10.12 Sierra or newer, Apple LLVM version 8.0.0 (xcode 8.2, check version with `clang -v`). For GPU support, Nvidia [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) _(you need to have Nvidia CUDA GPU graphic card)_
 
 First, you need to compile [this fork](https://github.com/OrKoN/darknet) of darknet with OpenCV support (optionally, with CUDA support):
 
