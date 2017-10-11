@@ -22,7 +22,14 @@ Currently, the wrapper implements a demo method to run a recognition from the we
 Requires:
 
 - Modern Node and NPM versions (tested with latest LTS release Node v6.*.*, npm 3.*.*, supposed to work with the newer versions as well)
-- OpenCV (version 2, for example, 2.4.9.1) to be installed on your system
+- OpenCV (version 2, for example, 2.4.9.1) to be installed on your system.
+
+  Installing with Brew on MacOS:
+  
+      brew install opencv@2
+      sudo chown -R $(whoami):admin /usr/local
+      brew link --force opencv@2
+
 - If you are on a mac: macOS 10.12 Sierra or newer, Apple LLVM version 8.0.0 (xcode 8.2, check version with `clang -v`). For GPU support, Nvidia [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) _(you need to have Nvidia CUDA GPU graphic card)_
 
 First, you need to compile [this fork](https://github.com/OrKoN/darknet) of darknet with OpenCV support (optionally, with CUDA support):
