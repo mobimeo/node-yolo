@@ -128,7 +128,7 @@ darknet.detectImage({
   modified - raw frame with detections drawn, rgb24 format
   original - raw frame, as captured by the webcam/video, rgb24 format,
   detections - array of detections
-  dimenstions - image width and height
+  dimensions - image width and height
 
   Example detections:
 
